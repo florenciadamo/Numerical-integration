@@ -1,0 +1,152 @@
+rm(list = ls())
+#Punto A ------------
+
+# Función a integrar
+g = function(t){t^(z-1)*exp(-t)}
+z=9.23
+
+curve(g,from = 0, to = 50)
+
+simpson.compuesto = function(a, b, n){
+  if((n %% 2) == 0){
+    #Paso 1
+    h = (b-a)/n
+    
+    #Paso 2
+    tio = g(a) + g(b)
+    ti1 = 0 #Suma impar
+    ti2 = 0 #Suma par
+    
+    #Paso 3
+    for (i in 1:(n-1)) {
+      #Paso 4
+      t = a + i*h
+      #Paso 5 
+      if((i %% 2) == 0){
+        ti2 = ti2 + g(t)
+      }else{
+        ti1 = ti1 + g(t)
+      }
+    }
+    #Paso 6
+    val = h*(tio + 2*ti2 + 4*ti1)/3
+    return(val)
+  }
+  else return("n debe ser par")
+}
+
+(simpson.compuesto(0,50,100))
+
+
+#Punto B ------------
+lambda <- 0.43
+alpha <- 9.23
+g = function(t){t^(alpha-1)*exp(-t)}
+
+G.alpha <- simpson.compuesto(g,0,50,100)
+
+f <- function(x){lambda*exp(-lambda*x) * (lambda*x)^(alpha-1) / G.alpha}
+curve(f,from = 0, to = 50)
+
+#Para calcular probabilidades
+# P(X>20) = 1 - P(X<20)
+1- (simpson.compuesto(f,0,20,100)) # fijarse de correr el alg que tiene a f como parametro
+(simpson.compuesto(f,20,100,100)) 
+#Punto C ------------
+
+fE <- function(x){x*f(x)}
+curve(fE, from = 0, to = 100)
+
+
+simpson.compuesto = function(a, b, n){
+  if((n %% 2) == 0){
+    #Paso 1
+    h = (b-a)/n
+    
+    #Paso 2
+    tio = fE(a) + fE(b)
+    ti1 = 0 #Suma impar
+    ti2 = 0 #Suma par
+    
+    #Paso 3
+    for (i in 1:(n-1)) {
+      #Paso 4
+      t = a + i*h
+      #Paso 5 
+      if((i %% 2) == 0){
+        ti2 = ti2 + fE(t)
+      }else{
+        ti1 = ti1 + fE(t)
+      }
+    }
+    #Paso 6
+    val = h*(tio + 2*ti2 + 4*ti1)/3
+    return(val)
+  }
+  else return("n debe ser par")
+}
+
+(EX <- simpson.compuesto(0,100,10000))
+
+#Punto D --------
+#Calculo Varianza 
+
+
+
+fv <- function(x){((x - EX)^2 * f(x))}
+curve(fv, from = 0, to = 100)
+Vx <- simpson.compuesto(0,100,10000)
+
+
+# Derivada de la varianza ------
+
+simpson.compuesto = function(f,a, b, n){
+  if((n %% 2) == 0){
+    #Paso 1
+    h = (b-a)/n
+    
+    #Paso 2
+    tio = f(a) + f(b)
+    ti1 = 0 #Suma impar
+    ti2 = 0 #Suma par
+    
+    #Paso 3
+    for (i in 1:(n-1)) {
+      #Paso 4
+      t = a + i*h
+      #Paso 5 
+      if((i %% 2) == 0){
+        ti2 = ti2 + f(t)
+      }else{
+        ti1 = ti1 + f(t)
+      }
+    }
+    #Paso 6
+    val = h*(tio + 2*ti2 + 4*ti1)/3
+    return(val)
+  }
+  else return("n debe ser par")
+}
+
+lambda <- 0.43
+alpha <- 9.23
+
+g = function(t){t^(alpha-1)*exp(-t)}
+(G.alpha <- simpson.compuesto(g,0,50,100))
+f <- function(x){lambda*exp(-lambda*x) * (lambda*x)^(alpha-1) / G.alpha}
+fE <- function(x){x*f(x)}
+(EX <- simpson.compuesto(fE,0,100,10000))
+fv <- function(x){((x - EX)^2 * f(x))}
+Vx <- simpson.compuesto(fv,0,100,10000)
+
+h = 10^-5
+alpha.h = alpha + 10^-5
+g.h <- function(t){t^(alpha.h-1)*exp(-t)}
+(G.alpha.h <- simpson.compuesto(g.h,0,50,100))
+f.h <- function(x){lambda*exp(-lambda*x) * (lambda*x)^(alpha.h-1) / G.alpha.h}
+fE.h = function(x){x * f.h(x)}
+(Ex.h <-simpson.compuesto(fE.h,0,100,10000))
+fv.h <- function(x){((x - Ex.h)^2 * f.h(x))}
+Vx.h <- simpson.compuesto(fv.h,0,100,10000)
+
+(derivada = (Vx.h - Vx )/ h)
