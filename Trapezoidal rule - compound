@@ -1,0 +1,23 @@
+rm(list = ls())
+
+
+
+trapecio.compuesto = function(a, b, n){
+  h = (b-a)/n
+  
+  xio = fn(a) + fn(b)
+  xi = 0
+  for (i in 1:(n-1)) {
+    x = a + i*h
+    xi = xi + fn(x)
+  }
+  val = h*(xio + 2*xi)/2
+  return(val)
+}
+
+fn = function(x){
+  val = x*log(x)
+  return(val)
+}
+
+(trapecio.compuesto(1,2,4)) # 0.6399005
