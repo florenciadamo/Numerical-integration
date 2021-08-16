@@ -1,0 +1,25 @@
+rm(list = ls())
+
+
+puntomedio.compuesto = function(a, b, n){
+  if((n %% 2) == 0){
+    h = (b-a)/(n+2)
+    
+    xi2 = 0
+    for (i in -1:(n+1)) {
+      x = a + (i+1)*h
+      if((i %% 2) == 0){
+        xi2 = xi2 + fn(x)
+      }
+    }
+    val = 2*h*xi2
+    return(val)
+  }
+  else return("n debe ser par")
+}
+
+fn = function(x){
+  val = x*log(x)
+  return(val)
+}
+(puntomedio.compuesto(1,2,4)) #0.6330964
